@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<songs>
+	<song>
+		<songID>2034a33a-dfaa-427a-a5cf-7068cfe420b9</songID>
+		<title>Come Together</title>
+		<length>4.19</length>
+		<filePath>songs/cometogether.mp3</filePath>
+		<releaseDate>1969-10-08</releaseDate>
+		<recordDate>1969-7-30</recordDate>
+		<songArtists>
+			<artist>
+				<artistID>2424be5a-gcer-fgh4-g8ea-fsg87y3ab9</artistID>
+				<firstName>John</firstName>
+				<lastName>Lennon</lastName>
+				<bandName>The Beatles</bandName>
+				<bio>Rhythm guitarist, singer/songwriter</bio>
+			</artist>
+		</songArtists>
+	</song>
+</songs>

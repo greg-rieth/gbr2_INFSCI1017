@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artists>
+	<artist>
+		<artistID>2424be5a-gcer-fgh4-g8ea-fsg87y3ab9</artistID>
+		<firstName>John</firstName>
+		<lastName>Lennon</lastName>
+		<bandName>The Beatles</bandName>
+		<bio>Rhythm guitarist, singer/songwriter</bio>
+	</artist>
+</artists>
