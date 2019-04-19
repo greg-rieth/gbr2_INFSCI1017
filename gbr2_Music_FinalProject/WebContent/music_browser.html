@@ -1,0 +1,271 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Browse Music</title>
+<script src="js/jquery-3.4.0.min.js"></script>
+<link href="css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<div id="musicSearch">
+	<h1>Browse Music</h1>
+	<div>
+		Search Type:
+		<select name="searchType" id="searchType" class="textField">
+			<option value="">Everything</option>
+			<option value="equals">Equals</option>
+			<option value="begins">Begins</option>
+			<option value="ends">Ends</option>
+			<option value="contains">Contains</option>
+		</select>
+	</div>
+	<div>
+		Song Title: <input type="text" id="songTitle" name="songTitle" value="" class="textField"/>
+	</div>
+	<div>
+		<input type="button" id="btnSongs" name="btnSongs" value="Search"/>
+	</div>
+	<div>
+		Artist Last Name: <input type="text" id="artistName" name="artistName" value="" class="textField"/>
+	</div>
+	<div>
+		<input type="button" id="btnArtists" name="btnArtists" value="Search"/>
+	</div>
+	<div>
+		Album Title: <input type="text" id="albumTitle" name="albumTitle" value="" class="textField"/>
+	</div>
+	<div>
+		<input type="button" id="btnAlbums" name="btnAlbums" value="Search"/>
+	</div>
+</div>
+
+<div id="searchResults">
+	<table border ="1" id="tblSearchResults">
+	</table>
+</div>
+
+</body>
+<script>
+	
+	$(document).ready(function (){
+		//Listen for click events and call appropriate search functions when a click occurs
+		$("#btnSongs").click(function(){
+			searchSongs();
+		});
+		$("#btnArtists").click(function(){
+			searchArtists();
+		});
+		$("#btnAlbums").click(function(){
+			searchAlbums();
+		});
+		//Listen for typing and whenever 3 or more characters are typed, call search function
+		//Remove results when 2 or less characters remain
+		$("#songTitle").keyup(function(){
+			var keyPressed = $("#songTitle").val();
+			if(keyPressed.length > 2){
+				searchSongs();
+			}else{
+				$(".data").remove();
+			}
+		});
+		$("#artistName").keyup(function(){
+			var keyPressed = $("#artistName").val();
+			if(keyPressed.length > 2){
+				searchArtists();
+			}else{
+				$(".data").remove();
+			}
+		});
+		$("#albumTitle").keyup(function(){
+			var keyPressed = $("#albumTitle").val();
+			if(keyPressed.length > 2){
+				searchAlbums();
+			}else{
+				$(".data").remove();
+			}
+		});
+	});
+		
+	function searchSongs(){
+		var songTitle = $("#songTitle").val();
+		var searchType = $("#searchType").val();
+				
+		//console.log("Song: " + songTitle);
+		//console.log("SearchType: " + searchType);
+		
+		//call webservice with song title and search type, then call parse function to organize returned data
+		var url = "SongListWS?title=" + songTitle + "&searchType=" + searchType;
+		//console.log(url);
+		$.get(url, function(resp){
+				parseSongData(resp);
+		})
+	}	
+	
+	function searchArtists(){
+		var artistName = $("#artistName").val();
+		var searchType = $("#searchType").val();
+				
+		//console.log("Artist: " + artistName);
+		//console.log("SearchType: " + searchType);
+		
+		//call webservice with artist last name and search type, then call parse function to organize returned data
+		var url = "ArtistListWS?lastName=" + artistName + "&searchType=" + searchType;
+		//console.log(url);
+		$.get(url, function(resp){
+				parseArtistData(resp);
+		})
+	}
+			
+	function searchAlbums(){
+		var albumTitle = $("#albumTitle").val();
+		var searchType = $("#searchType").val();
+			
+		//console.log("Album: " + albumTitle);
+		//console.log("SearchType: " + searchType);
+		
+		//call webservice with album title and search type, then call parse function to organize returned data
+		var url = "AlbumListWS?title=" + albumTitle + "&searchType=" + searchType;
+		//console.log(url);
+		$.get(url, function(resp){
+				parseAlbumData(resp);
+		})
+	}
+		
+	function parseSongData(data){
+		//remove data before new search results are displayed
+		$(".data").remove();
+		//display appropriate heading
+		var heading = $("<tr><th>Title</th><th>Length</th><th>File Path</th><th>Release Date</th><th>Record Date</th></tr>");
+		$("#tblSearchResults").append(heading);
+		heading.attr({"class" : "data"});
+		//for each element of data, append to different cell within each row
+		for(var i=0; i < data.length; i++){
+			
+			var tr = $("<tr></tr>"); //create entry html table row
+			tr.attr({"class" : "data"});
+			
+			//First data cell
+			var td = $("<td></td>"); //create empty html table data
+			td.html(data[i].title);
+			tr.append(td);
+			
+			//Second data cell
+			td = $("<td></td>");
+			td.html(data[i].length);
+			tr.append(td);
+			
+			//Third data cell
+			td = $("<td></td>");
+			td.html(data[i].file_path);
+			tr.append(td);
+			
+			//Fourth data cell
+			td = $("<td></td>");
+			td.html(data[i].release_date);
+			tr.append(td);
+			
+			//Fifth data cell
+			td = $("<td></td>");
+			td.html(data[i].record_date);
+			tr.append(td);
+			
+			//append all data to table
+			$("#tblSearchResults").append(tr);
+			
+		}
+	}
+	
+	function parseArtistData(data){
+		//remove data before new search results are displayed
+		$(".data").remove();
+		//display appropriate heading
+		var heading = $("<tr><th>First Name</th><th>Last Name</th><th>Band Name</th><th>Bio</th></tr>");
+		$("#tblSearchResults").append(heading);
+		heading.attr({"class" : "data"});
+		//for each element of data, append to different cell within each row
+		for(var i=0; i < data.length; i++){
+			
+			var tr = $("<tr></tr>"); //create entry html table row
+			tr.attr({"class" : "data"});
+			
+			//First data cell
+			var td = $("<td></td>"); //create empty html table data
+			td.html(data[i].first_name);
+			tr.append(td);
+			
+			//Second data cell
+			td = $("<td></td>");
+			td.html(data[i].last_name);
+			tr.append(td);
+			
+			//Third data cell
+			td = $("<td></td>");
+			td.html(data[i].band_name);
+			tr.append(td);
+			
+			//Fourth data cell
+			td = $("<td></td>");
+			td.html(data[i].bio);
+			tr.append(td);
+			
+			//append all data to table
+			$("#tblSearchResults").append(tr);
+			
+		}
+	}
+	
+	function parseAlbumData(data){
+		//remove data before new search results are displayed
+		$(".data").remove();
+		//display appropriate heading
+		var heading = $("<tr><th>Title</th><th>Length</th><th>Cover Image Path</th><th>Release Date</th><th>Recording Company Name</th><th>Number Of Tracks</th><th>PMRC Rating</th></tr>");
+		$("#tblSearchResults").append(heading);
+		heading.attr({"class" : "data"});
+		//for each element of data, append to different cell within each row
+		for(var i=0; i < data.length; i++){
+			
+			var tr = $("<tr></tr>"); //create entry html table row
+			tr.attr({"class" : "data"});
+			
+			//First data cell
+			var td = $("<td></td>"); //create empty html table data
+			td.html(data[i].title);
+			tr.append(td);
+			
+			//Second data cell
+			td = $("<td></td>");
+			td.html(data[i].length);
+			tr.append(td);
+			
+			//Third data cell
+			td = $("<td></td>");
+			td.html(data[i].cover_image_path);
+			tr.append(td);
+			
+			//Fourth data cell
+			td = $("<td></td>");
+			td.html(data[i].release_date);
+			tr.append(td);
+			
+			//Fifth data cell
+			td = $("<td></td>");
+			td.html(data[i].recording_company_name);
+			tr.append(td);
+			
+			//Sixth data cell
+			td = $("<td></td>");
+			td.html(data[i].number_of_tracks);
+			tr.append(td);
+			
+			//Seventh data cell
+			td = $("<td></td>");
+			td.html(data[i].PMRC_rating);
+			tr.append(td);
+			
+			//append all data to table
+			$("#tblSearchResults").append(tr);
+			
+		}
+	}
+</script>
+</html>
